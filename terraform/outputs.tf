@@ -50,4 +50,7 @@ output "app_url" {
   description = "Open with http — not https"
   value       = "http://${module.alb.alb_dns_name}"
 }
+output "pipeline_name" {
+  value = module.cicd.pipeline_name
+}
 

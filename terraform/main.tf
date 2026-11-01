@@ -1,4 +1,4 @@
-# Root — calls only. Workflow 06 applies vpc + ecr + cluster + service + alb.
+# Root — calls only. Workflow 08 applies the five app modules plus the pipeline.
 
 locals {
   project = var.project
@@ -46,4 +46,18 @@ module "ecs_service" {
 
   # Wait until the capacity provider is attached to the cluster.
   depends_on = [module.ecs_cluster]
+}
+
+module "cicd" {
+  source = "./modules/cicd"
+
+  project                 = local.project
+  aws_region              = local.region
+  codestar_connection_arn = var.codestar_connection_arn
+  github_repository       = var.github_repository
+  github_branch           = var.github_branch
+  ecr_repository_url      = module.ecr.repository_url
+  ecr_repository_name     = module.ecr.repository_name
+  ecs_cluster_name        = module.ecs_cluster.cluster_name
+  ecs_service_name        = module.ecs_service.service_name
 }
